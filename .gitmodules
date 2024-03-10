@@ -1,0 +1,4 @@
+[submodule "VCA"]
+	path = VCA
+	url = https://github.com/cd-athena/VCA
+	branch = dev

@@ -12,7 +12,7 @@ The software is tested in Windows OS. The steps to build the project in Windows 
 ## Prerequisites
  1. [Python](https://www.python.org/) version 3.12 or higher.
 
-## Instructions to run 
+## Instructions to run in Windows
 
   1. Open Command prompt and Clone Repository :
   
@@ -44,4 +44,3 @@ The software is tested in Windows OS. The steps to build the project in Windows 
 
 
 Make sure to replace `<project_directory>`, and `<venv_name>` with the appropriate values for the project. Step 1 and Step 4 have to be done only the first time.
-

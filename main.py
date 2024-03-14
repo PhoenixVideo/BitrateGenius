@@ -23,29 +23,16 @@ import platform
 import argparse
 import sys
 
-def run_executable_in_build(system_platform, build_dir, parameters):
+def run_executable_in_build(build_dir, parameters):
     os.chdir(build_dir)
     executable_path = None
-    if system_platform == 'Windows':
-        executable_path = os.path.join(build_dir, "vca_release.exe")
-        try:
-            subprocess.run([executable_path] + parameters, check=True)
-            print("Executable ran successfully!")
-        except subprocess.CalledProcessError:
-            print("Error: Failed to execute the executable.")
-            sys.exit()
-    elif system_platform == 'Linux':
-        dist = platform.dist()
-        if dist[0].lower() == 'ubuntu':
-            executable_path = os.path.join(build_dir, "vca_release")
-        try:
-            subprocess.run([executable_path] + parameters, check=True)
-            print("Executable ran successfully!")
-        except subprocess.CalledProcessError:
-            print("Error: Failed to execute the executable.")
-            sys.exit()
-    else:
-        print("BitrateGenius currently works only in Windows or Ubuntu")
+    executable_path = os.path.join(build_dir, "vca_release.exe")
+    try:
+        subprocess.run([executable_path] + parameters, check=True)
+        print("Executable ran successfully!")
+    except subprocess.CalledProcessError:
+        print("Error: Failed to execute the executable.")
+        sys.exit()
 
 
 def predict_bitrate(parameters_vector, path):
@@ -70,8 +57,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     input_video_file = args.inputvideo
 
-    sys_platform = platform.system()
-
     current_directory = os.path.dirname(os.path.abspath(__file__))
     build_directory = os.path.join(current_directory, "build")
     temp_csv_path = os.path.join(build_directory, "temp.csv")
@@ -90,7 +75,7 @@ if __name__ == "__main__":
 
     start_time = time.time()
 
-    run_executable_in_build(sys_platform, build_directory, vca_parameters)
+    run_executable_in_build(build_directory, vca_parameters)
 
     df = pd.read_csv(os.path.join(temp_csv_path))
 

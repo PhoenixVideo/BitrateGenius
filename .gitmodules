@@ -1,4 +1,4 @@
 [submodule "VCA"]
 	path = VCA
-	url = https://github.com/cd-athena/VCA
+	url = https://github.com/PhoenixVideo/VCA
 	branch = dev

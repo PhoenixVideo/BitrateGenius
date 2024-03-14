@@ -79,7 +79,7 @@ if __name__ == "__main__":
         vca_parameters = ["--input", input_video_file, "--complexity-csv", temp_csv_path, "--no-edgedensity",
                           "--no-dctenergy-chroma"]
     elif video_file_extension == '.yuv':
-        vca_parameters = ["--input", input_video_file, "--input-res", "3840x2160", "--fps", "60", "--complexity-csv",
+        vca_parameters = ["--input", input_video_file, "--input-res", "3840x2160", "--input-fps", "60", "--complexity-csv",
                           temp_csv_path, "--no-edgedensity", "--no-dctenergy-chroma"]
     else:
         print("Video extension other than .y4m and .yuv is not supported")

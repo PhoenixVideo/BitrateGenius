@@ -32,8 +32,8 @@ def run_executable_in_build(system_platform, build_dir, parameters):
         print("BitrateGenius currently works only in Windows or Ubuntu")
 
 
-def predict_bitrate(parameters_vector):
-    bitrate_pred_model = pickle.load(open(os.path.join(build_directory, 'bitrate_predictor.pkl'), 'rb'))
+def predict_bitrate(parameters_vector, path):
+    bitrate_pred_model = pickle.load(open(path, 'rb'))
     pred_bitrate = bitrate_pred_model.predict(parameters_vector)
     return pred_bitrate
 
@@ -58,6 +58,7 @@ if __name__ == "__main__":
     current_directory = os.path.dirname(os.path.abspath(__file__))
     build_directory = os.path.join(current_directory, "build")
     temp_csv_path = os.path.join(build_directory, "temp.csv")
+    model_path = os.path.join(build_directory, 'bitrate_predictor.pkl')
 
     video_file_extension = os.path.splitext(input_video_file)[1]
     if video_file_extension == '.y4m':
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     model_parameters = [
         [h_mean, E_max, entropy_max, entropyDiff_max, entropyU_max, entropyV_max]]
 
-    predicted_bitrate = predict_bitrate(model_parameters)
+    predicted_bitrate = predict_bitrate(model_parameters, model_path)
 
     end_time = time.time()
 

@@ -33,6 +33,7 @@ def run_executable_in_build(system_platform, build_dir, parameters):
             print("Executable ran successfully!")
         except subprocess.CalledProcessError:
             print("Error: Failed to execute the executable.")
+            sys.exit()
     elif system_platform == 'Linux':
         dist = platform.dist()
         if dist[0].lower() == 'ubuntu':
@@ -42,6 +43,7 @@ def run_executable_in_build(system_platform, build_dir, parameters):
             print("Executable ran successfully!")
         except subprocess.CalledProcessError:
             print("Error: Failed to execute the executable.")
+            sys.exit()
     else:
         print("BitrateGenius currently works only in Windows or Ubuntu")
 

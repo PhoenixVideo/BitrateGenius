@@ -2,9 +2,9 @@ import subprocess
 import os
 import pickle
 import pandas as pd
+import numpy as np
 import time
 import platform
-import math
 import argparse
 import sys
 
@@ -38,8 +38,7 @@ def predict_bitrate(parameters_vector):
     return pred_bitrate
 
 
-def clean_up():
-    file_path = os.path.dirname(os.path.abspath(__file__)) + "/build/temp.csv"
+def clean_up(file_path):
     if os.path.exists(file_path):
         os.remove(file_path)
 
@@ -57,14 +56,16 @@ if __name__ == "__main__":
     sys_platform = platform.system()
 
     current_directory = os.path.dirname(os.path.abspath(__file__))
-    build_directory = current_directory + "/build/"
+    build_directory = os.path.join(current_directory, "build")
+    temp_csv_path = os.path.join(build_directory, "temp.csv")
 
     video_file_extension = os.path.splitext(input_video_file)[1]
     if video_file_extension == '.y4m':
-        vca_parameters = ["--input", input_video_file, "--complexity-csv", current_directory + "/build/temp.csv", "--no-edgedensity", "--no-dctenergy-chroma"]
+        vca_parameters = ["--input", input_video_file, "--complexity-csv", temp_csv_path, "--no-edgedensity",
+                          "--no-dctenergy-chroma"]
     elif video_file_extension == '.yuv':
         vca_parameters = ["--input", input_video_file, "--input-res", "3840x2160", "--fps", "60", "--complexity-csv",
-                          current_directory + "/build/temp.csv", "--no-edgedensity", "--no-dctenergy-chroma"]
+                          temp_csv_path, "--no-edgedensity", "--no-dctenergy-chroma"]
     else:
         print("Video extension other than .y4m and .yuv is not supported")
         sys.exit()
@@ -73,18 +74,17 @@ if __name__ == "__main__":
 
     run_executable_in_build(sys_platform, build_directory, vca_parameters)
 
-    df = pd.read_csv(current_directory + "/build/temp.csv")
-    E_max = df["E"].max()
-    E_std = df["E"].std()
+    df = pd.read_csv(os.path.join(temp_csv_path))
+
     h_mean = df["h"].mean()
-    h_std = df["h"].std()
-    L_mean = df["L"].mean()
+    E_max = df["E"].max()
     entropy_max = df["entropy"].max()
-    entropyDiff_mean = df["entropyDiff"].mean()
+    entropyDiff_max = df["entropyDiff"].max()
     entropyU_max = df["entropyU"].max()
     entropyV_max = df["entropyV"].max()
+
     model_parameters = [
-        [E_max, E_std, h_mean, h_std, L_mean, entropy_max, entropyDiff_mean, entropyU_max, entropyV_max]]
+        [h_mean, E_max, entropy_max, entropyDiff_max, entropyU_max, entropyV_max]]
 
     predicted_bitrate = predict_bitrate(model_parameters)
 
@@ -94,6 +94,6 @@ if __name__ == "__main__":
 
     print("total_execution_time", total_execution_time, "seconds")
 
-    print("The predicted bitrate (in kbps) is: " + str(math.exp(predicted_bitrate[0])) + " kbps")
+    print("The predicted bitrate (in kbps) is: " + str(np.power(10, predicted_bitrate[0])) + " kbps")
 
-    clean_up()
+    clean_up(temp_csv_path)

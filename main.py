@@ -33,6 +33,7 @@ def run_executable_in_build(system_platform, build_dir, parameters):
             print("Executable ran successfully!")
         except subprocess.CalledProcessError:
             print("Error: Failed to execute the executable.")
+            sys.exit()
     elif system_platform == 'Linux':
         dist = platform.dist()
         if dist[0].lower() == 'ubuntu':
@@ -42,6 +43,7 @@ def run_executable_in_build(system_platform, build_dir, parameters):
             print("Executable ran successfully!")
         except subprocess.CalledProcessError:
             print("Error: Failed to execute the executable.")
+            sys.exit()
     else:
         print("BitrateGenius currently works only in Windows or Ubuntu")
 
@@ -49,7 +51,8 @@ def run_executable_in_build(system_platform, build_dir, parameters):
 def predict_bitrate(parameters_vector, path):
     bitrate_pred_model = pickle.load(open(path, 'rb'))
     pred_bitrate = bitrate_pred_model.predict(parameters_vector)
-    return pred_bitrate
+    y_pred_new = np.power(10,pred_bitrate)
+    return y_pred_new
 
 
 def clean_up(file_path):
@@ -94,12 +97,13 @@ if __name__ == "__main__":
     h_mean = df["h"].mean()
     E_max = df["E"].max()
     entropy_max = df["entropy"].max()
-    entropyDiff_max = df["entropyDiff"].max()
-    entropyU_max = df["entropyU"].max()
-    entropyV_max = df["entropyV"].max()
+    entropyDiff_mean = df["entropyDiff"].mean()
+    L_mean = df["L"].mean()
+    entropyU_mean = df["entropyU"].mean()
+    entropyV_mean = df["entropyV"].mean()
 
     model_parameters = [
-        [h_mean, E_max, entropy_max, entropyDiff_max, entropyU_max, entropyV_max]]
+        [h_mean, E_max, entropy_max, entropyDiff_mean, L_mean, entropyU_mean, entropyV_mean]]
 
     predicted_bitrate = predict_bitrate(model_parameters, model_path)
 
@@ -109,6 +113,7 @@ if __name__ == "__main__":
 
     print("total_execution_time", total_execution_time, "seconds")
 
-    print("The predicted bitrate (in kbps) is: " + str(np.power(10, predicted_bitrate[0])) + " kbps")
+    print("The predicted bitrate (in kbps) is: " + str(predicted_bitrate[0]) + " kbps")
 
     clean_up(temp_csv_path)
+
